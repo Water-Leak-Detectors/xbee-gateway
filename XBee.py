@@ -4,7 +4,6 @@ This modules handle reciveced data from XBee Nodes
 import sys
 import glob
 import serial
-from time import sleep
 
 #A function to find the COM port in different platforms
 def serial_ports():
@@ -19,13 +18,14 @@ def serial_ports():
     elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
         # this excludes your current terminal "/dev/tty"
         ports = glob.glob('/dev/tty[A-Za-z]*')
-	print(ports)
     elif sys.platform.startswith('darwin'):
         ports = glob.glob('/dev/tty.*')
     else:
         raise EnvironmentError('Unsupported platform')
 
     result = []
+    if __name__ == '__main__':
+        print(serial_ports())
     for port in ports:
         try:
             s = serial.Serial(port)
@@ -33,21 +33,24 @@ def serial_ports():
             result.append(port)
         except (OSError, serial.SerialException):
             pass
-    print(result)	
     return result
-    if __name__ == '__main__':
-        print(serial_ports())
 
+class XBeeHandler:
+    """
+    initialinzing a serial object to communicate with XBEE module
+    """
+    def __init__(self):
+        #Initializing of a serial port
+        self.ser = serial.Serial()
+        self.ser.port = serial_ports()[0]
+        self.ser.baudrate = 9600
+        self.ser.open()
+        self.ser.reset_input_buffer()
+        # self.ser.readline()
 
-ser = serial.Serial()
-ser.port = serial_ports()[0]
-ser.baudrate = 9600
-ser.open()
-ser.reset_input_buffer()
-
-try:
-    while True:
-        sleep(2)
-        print("data: {}".format(ser.readline()))
-except KeyboardInterrupt:
-    pass
+xbeeNode = serial.Serial()
+xbeeNode.port = serial_ports()[0]
+xbeeNode.baudrate = 9600
+xbeeNode.open()
+xbeeNode.reset_input_buffer()
+xbeeNode.readline()        

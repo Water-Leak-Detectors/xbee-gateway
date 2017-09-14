@@ -3,46 +3,23 @@ import time
 from time import sleep
 import sys
 import json
+import select
 import serial
 import paho.mqtt.client as mqtt
-# import XBee
-
-
-#A function to find the COM port in different platforms
-def serial_ports():
-    
-    """ Lists serial port names
-        :raises EnvironmentError:
-            On unsupported or unknown platforms
-        :returns:
-            A list of the serial ports available on the system
-    """
-    if sys.platform.startswith('win'):
-        ports = ['COM%s' % (i + 1) for i in range(256)]
-    elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
-        # this excludes your current terminal "/dev/tty"
-        ports = glob.glob('/dev/tty[A-Za-z]*')
-    elif sys.platform.startswith('darwin'):
-        ports = glob.glob('/dev/tty.*')
-    else:
-        raise EnvironmentError('Unsupported platform')
-
-    result = []
-    for port in ports:
-        try:
-            s = serial.Serial(port)
-            s.close()
-            result.append(port)
-        except (OSError, serial.SerialException):
-            pass
-    return result
-    if __name__ == '__main__':
-        print(serial_ports())
-
-
+from XBee import xbeeNode
 
 THINGSBOARD_HOST = '172.25.224.84'
 ACCESS_TOKEN = 'sXEes3EvtyUZJkreuRCb'
+
+XBEE_R_W = 0
+BUFFER = 1
+PUBLISH = 2
+STATE = RECIEVE
+
+inputs = [xbeeNode]
+outputs = []
+exceptions = []
+
 
 # Data capture and upload interval in seconds. Less interval will eventually hang the DHT22.
 INTERVAL = 2
@@ -56,16 +33,24 @@ client.username_pw_set(ACCESS_TOKEN)
 client.connect(THINGSBOARD_HOST, 1883, 60)
 client.loop_start()
 
-xbee = serial.Serial()
-xbee.port = serial_ports()[0]
-xbee.baudrate = 115200
-xbee.open()
-xbee.reset_input_buffer()
-
 
 try:
     while True:
-        print(xbee.read())
+        if STATE = XBEE_R_W:
+            STATE = BUFFER
+            readable, writable, exceptional = select.select(inputs, outputs, inputs)
+            for rData in readable:
+                #handle recive data
+                # handle_data(rData)
+                STATE = XBEE_R_W
+                print("R DATA: {}".format(rData))
+                pass
+        elif STATE = BUFFER:
+            STATE = PUBLISH
+            pass
+        elif STATE = PUBLISH:
+            STATE = XBEE_R_W
+            pass
 except KeyboardInterrupt:
     pass
 
