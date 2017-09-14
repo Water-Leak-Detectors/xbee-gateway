@@ -4,6 +4,7 @@ This modules handle reciveced data from XBee Nodes
 import sys
 import glob
 import serial
+from time import sleep
 
 #A function to find the COM port in different platforms
 def serial_ports():
@@ -18,6 +19,7 @@ def serial_ports():
     elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
         # this excludes your current terminal "/dev/tty"
         ports = glob.glob('/dev/tty[A-Za-z]*')
+	print(ports)
     elif sys.platform.startswith('darwin'):
         ports = glob.glob('/dev/tty.*')
     else:
@@ -31,6 +33,7 @@ def serial_ports():
             result.append(port)
         except (OSError, serial.SerialException):
             pass
+    print(result)	
     return result
     if __name__ == '__main__':
         print(serial_ports())
@@ -44,7 +47,7 @@ ser.reset_input_buffer()
 
 try:
     while True:
-        sleep(1)
-        print("data: {}".format(ser.read()))
+        sleep(2)
+        print("data: {}".format(ser.readline()))
 except KeyboardInterrupt:
     pass
