@@ -7,6 +7,7 @@ import select
 import serial
 import paho.mqtt.client as mqtt
 from XBee import xbeeNode
+import XBee
 
 THINGSBOARD_HOST = '172.25.224.84'
 ACCESS_TOKEN = 'sXEes3EvtyUZJkreuRCb'
@@ -14,13 +15,13 @@ ACCESS_TOKEN = 'sXEes3EvtyUZJkreuRCb'
 XBEE_R_W = 0
 BUFFER = 1
 PUBLISH = 2
-STATE = RECIEVE
+STATE = XBEE_R_W
 
 inputs = [xbeeNode]
 outputs = []
 exceptions = []
 
-
+dataHandling = XBee.XBeeHandler()
 # Data capture and upload interval in seconds. Less interval will eventually hang the DHT22.
 INTERVAL = 2
 fsrValue = 0
@@ -36,19 +37,18 @@ client.loop_start()
 
 try:
     while True:
-        if STATE = XBEE_R_W:
+        if STATE == XBEE_R_W:
             STATE = BUFFER
             readable, writable, exceptional = select.select(inputs, outputs, inputs)
             for rData in readable:
                 #handle recive data
                 # handle_data(rData)
                 STATE = XBEE_R_W
-                print("R DATA: {}".format(rData))
-                pass
-        elif STATE = BUFFER:
+                dataRecived = rData.readline()
+        elif STATE == BUFFER:
             STATE = PUBLISH
             pass
-        elif STATE = PUBLISH:
+        elif STATE == PUBLISH:
             STATE = XBEE_R_W
             pass
 except KeyboardInterrupt:
