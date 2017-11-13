@@ -19,10 +19,6 @@ import json
 
 def status_handler(name, packet):
     print("Status Update - Status is now: {}".format(packet['status']))
-    # sensor_data_1['fsrN1'] = 4000
-    # client.publish('v1/devices/me/telemetry', json.dumps(sensor_data_1), 1)
-    # sensor_data_2['fsrN2'] = 2000
-    # client_2.publish('v1/devices/me/telemetry', json.dumps(sensor_data_2), 1)
 
 
 def io_sample_handler(name, packet):
@@ -45,24 +41,11 @@ def receive_packet(name, packet):
         elif data_node == '2':
             sensor_data_2['fsrN2'] = data
             print(data_type + ' ' + data_node + ' ' + '{}'.format(sensor_data_2['fsrN2']))
-            client.publish('v1/devices/me/telemetry', json.dumps(sensor_data_2), 1)
-    # print("rf_data: {}".format(packet['rf_data']))
-    # sensor_data_1['fsrN1'] = int.from_bytes(packet['rf_data'], 'big')
-    # print("sensor_data: {}".format(sensor_data_1))
-    # time.sleep(2)
-    # Sending humidity and temperature data to ThingsBoard
-    # client.publish('v1/devices/me/telemetry', json.dumps(sensor_data_1), 1)
-
-    # next_reading += INTERVAL
-    # sleep_time = next_reading - time.time()
-    # if sleep_time > 0:
-    #     time.sleep(sleep_time)
-    # pass
+            client_2.publish('v1/devices/me/telemetry', json.dumps(sensor_data_2), 1)
 
 THINGSBOARD_HOST = '172.25.224.84'
 ACCESS_TOKEN_1 = 'sXEes3EvtyUZJkreuRCb'
 ACCESS_TOKEN_2 = 'Y1PBluwmhe3UfLLPSAg7'
-# ACCESS_TOKEN = '7d92fc20-a1ca-11e7-9e43-df630275a618'
 # PORT = '/dev/ttyUSB0'
 PORT = 'COM13'
 BAUD_RATE = 9600
@@ -103,7 +86,7 @@ dispatch = Dispatch(ser)
 dispatch.register(
     "status",
     status_handler,
-    lambda packet: packet['id']=='status'
+    lambda packet: packet['id'] == 'status'
 )
 
 dispatch.register(
